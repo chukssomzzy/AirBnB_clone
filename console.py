@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """the entry point of the command interpreter"""
 
 import cmd
@@ -7,6 +7,7 @@ from models.base_model import BaseModel
 import re
 from shlex import split
 from datetime import datetime
+import copy
 
 
 
@@ -16,11 +17,11 @@ def parse(arg):
     iscurly = re.search(r"\{(.*?)\}", arg)
     isbrace = re.search(r"\[(.*?)\]", arg)
     if isbrace:
-        cmdlex = [i.strip(",") for i in split(arg[:isbrace.pos()])]
+        cmdlex = [i.strip(",") for i in split(arg[:isbrace.pos])]
         cmdlex.append(isbrace.group())
     elif iscurly:
-        cmdlex = [i.strip(",") for i in split(arg[:iscurly.pos()])]
-        cmdlex.append(isbrace.group())
+        cmdlex = [i.strip(",") for i in split(arg[:iscurly.pos])]
+        cmdlex.append(iscurly.group())
     else:
         cmdlex = [i.strip(",") for i in split(arg)]
     return cmdlex
@@ -72,7 +73,7 @@ class HBNBCommand(cmd.Cmd):
             print("** class doesn't exist **")
         elif len(args) < 2:
             print("** instance id missing **")
-        elif not self.__all_objs[args[0] + "." + args[1]]:
+        elif not getattr(self.__all_objs, args[0] + "." + args[1], None):
             print("** no instance found **")
         else:
             model = eval(args[0])(self.__all_objs[args[0] + "." + args[1]])
@@ -84,16 +85,86 @@ class HBNBCommand(cmd.Cmd):
                          " <** instance id missing **>", "class instance doesn"
                          "'t exit <** no instance found **>"]))
     def do_all(self, args):
+        """Prints all string representation of all instances based or
+        not on the class
+
+        Ex all BaseModel
+        $ all
+        """
         args = parse(args)
         list = []
         if not len(args):
-            for key, val in self.__all_objs.copy().items():
-                del val["__class__"]
-                val["updated_at"] = datetime.fromisoformat(val["updated_at"])
-                val["created_at"] = datetime.fromisoformat(val["created_at"])
+            for key, val in self.__all_objs.items():
+                val_copy = copy.copy(val)
+                del val_copy["__class__"]
+                val_copy["updated_at"] = datetime.fromisoformat(val["updated_at"])
+                val_copy["created_at"] = datetime.fromisoformat(val["created_at"])
                 list.append(f"[{key.split('.')[0]}] ({key.split('.')[1]})" +
-                            f" {val}")
-        print(list)
+                            f" {val_copy}")
+        elif args[0] in self.__defined_models:
+            for key, val in {key: val for key, val in self.__all_objs.items()
+                             if key.split(".")[0] == args[0]}.items():
+                val_copy = copy.copy(val)
+                del val_copy["__class__"]
+                val_copy["updated_at"] = datetime.fromisoformat(val["updated_at"])
+                val_copy["created_at"] = datetime.fromisoformat(val["created_at"])
+                list.append(f"[{key.split('.')[0]}] ({key.split('.')[1]})" +
+                            f" {val_copy}")
+        else:
+            print("** class doesn't exist **")
+        if len(list):
+            print(list)
+    def help_all(self):
+        print("\n".join(["Usage: all or all <Model>", "Error: ** class doesn't"
+                         "exit **"]))
+    def do_destroy(self, args):
+        """Deletes an instance based on the class name and id
+
+        Ex:
+            $ destroy BaseModel 1234-1234-1234
+        """
+        args = parse(args)
+        if not len(args):
+            print("** class name missing **")
+        elif args[0] not in self.__defined_models:
+            print("** class doesn't exist **")
+        elif len(args) < 2:
+            print("** instance id missing **")
+        elif f"{args[0]}.{args[1]}" not in  self.__all_objs.keys():
+            print("** no instance found **")
+        else:
+            del self.__all_objs[args[0] + "." + args[1]]
+            storage.save()
+    def do_update(self, args):
+        """Updates an instance based on the class name and id by
+        adding or updating attribute (save the change into the JSON file)
+
+        Ex:
+            $ update BaseModel 1234-1233-1234 email
+        Usage:
+            update <class name> <id> <attribute name>
+            "<attribute value>"
+        """
+
+        args = parse(args)
+        if not len(args):
+            print("** class name missing **")
+        elif args[0] not in self.__defined_models:
+            print("** class doesn't exist **")
+        elif len(args) < 2:
+            print("instance id missing")
+        elif f"{args[0]}.{args[1]}" not in  self.__all_objs.keys():
+            print("** no instance found **")
+        elif len(args) <= 3:
+            print("** value missing **")
+        else:
+            val_class = getattr(self.__all_objs[args[0] + "." + args[1]],
+                                args[2], str)
+            val_class = eval(val_class.__class__.__name__)
+            self.__all_objs[args[0] + "." + args[1]][args[2]] = val_class(args[3])
+            print(self.__all_objs)
+            storage.save()
+
 
 
 if __name__ == "__main__":
