@@ -3,7 +3,7 @@
 """BaseModel defines all the common attributes/methods"""
 import uuid
 import datetime
-from models import storage
+from . import storage
 
 
 class BaseModel:
