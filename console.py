@@ -2,14 +2,13 @@
 """the entry point of the command interpreter"""
 
 import cmd
+import copy
+import re
+from datetime import datetime
+from shlex import split
+
 from models import storage
 from models.base_model import BaseModel
-import re
-from shlex import split
-from datetime import datetime
-import copy
-
-
 
 
 def parse(arg):
@@ -34,19 +33,25 @@ class HBNBCommand(cmd.Cmd):
     }
     __all_objs = storage.all()
     prompt = "(hbnb) "
+
     def do_EOF(self, arg):
         """Control the EOF signal to the command interpreter"""
         return True
+
     def help_EOF(self):
         print("quit the console")
+
     def emptyline(self):
         pass
+
     def do_quit(self, arg):
         """quit terminate the command interpreter"""
         return True
+
     def help_quit(self):
         print("\n".join(["Quit command to exit the program", ""]))
-    def  do_create(self, model=None):
+
+    def do_create(self, model=None):
         model = parse(model)
         if not model:
             print("** class name missing **")
@@ -55,13 +60,17 @@ class HBNBCommand(cmd.Cmd):
             storage.save()
         else:
             print("** class doesn't exist **")
+
     def help_create(self):
-        print("\n".join(["Usage: create <Model>", "On class not found <** class"
-                         "name missing **>", "on class name doesn't exit <**"
+        print("\n".join(["Usage: create <Model>", "On class not found <**"
+                         "class name missing **>",
+                         "on class name doesn't exit <**"
                          "class doesn't exit **>"]))
+
     def complete_create(self, text, line, begidx, endidx):
         """Complete create command"""
         return [i for i in self.__defined_models if i.startswith(text)]
+
     def do_show(self, args):
         """Prints the string representation of an instance based on the class
         name and id
@@ -78,12 +87,14 @@ class HBNBCommand(cmd.Cmd):
         else:
             model = eval(args[0])(self.__all_objs[args[0] + "." + args[1]])
             print(model)
+
     def help_show(self):
         print("\n".join(["Usage: show <model> <id>", "class name is missing"
                          " <** class name missing **>", "class name doesn't"
                          " exist <** class doesn't exist **", "id is missing"
                          " <** instance id missing **>", "class instance doesn"
                          "'t exit <** no instance found **>"]))
+
     def do_all(self, args):
         """Prints all string representation of all instances based or
         not on the class
@@ -97,8 +108,10 @@ class HBNBCommand(cmd.Cmd):
             for key, val in self.__all_objs.items():
                 val_copy = copy.copy(val)
                 del val_copy["__class__"]
-                val_copy["updated_at"] = datetime.fromisoformat(val["updated_at"])
-                val_copy["created_at"] = datetime.fromisoformat(val["created_at"])
+                val_copy["updated_at"
+                         ] = datetime.fromisoformat(val["updated_at"])
+                val_copy["created_at"
+                         ] = datetime.fromisoformat(val["created_at"])
                 list.append(f"[{key.split('.')[0]}] ({key.split('.')[1]})" +
                             f" {val_copy}")
         elif args[0] in self.__defined_models:
@@ -106,17 +119,21 @@ class HBNBCommand(cmd.Cmd):
                              if key.split(".")[0] == args[0]}.items():
                 val_copy = copy.copy(val)
                 del val_copy["__class__"]
-                val_copy["updated_at"] = datetime.fromisoformat(val["updated_at"])
-                val_copy["created_at"] = datetime.fromisoformat(val["created_at"])
+                val_copy["updated_at"
+                         ] = datetime.fromisoformat(val["updated_at"])
+                val_copy["created_at"
+                         ] = datetime.fromisoformat(val["created_at"])
                 list.append(f"[{key.split('.')[0]}] ({key.split('.')[1]})" +
                             f" {val_copy}")
         else:
             print("** class doesn't exist **")
         if len(list):
             print(list)
+
     def help_all(self):
         print("\n".join(["Usage: all or all <Model>", "Error: ** class doesn't"
                          "exit **"]))
+
     def do_destroy(self, args):
         """Deletes an instance based on the class name and id
 
@@ -130,11 +147,12 @@ class HBNBCommand(cmd.Cmd):
             print("** class doesn't exist **")
         elif len(args) < 2:
             print("** instance id missing **")
-        elif f"{args[0]}.{args[1]}" not in  self.__all_objs.keys():
+        elif f"{args[0]}.{args[1]}" not in self.__all_objs.keys():
             print("** no instance found **")
         else:
             del self.__all_objs[args[0] + "." + args[1]]
             storage.save()
+
     def do_update(self, args):
         """Updates an instance based on the class name and id by
         adding or updating attribute (save the change into the JSON file)
@@ -153,18 +171,17 @@ class HBNBCommand(cmd.Cmd):
             print("** class doesn't exist **")
         elif len(args) < 2:
             print("instance id missing")
-        elif f"{args[0]}.{args[1]}" not in  self.__all_objs.keys():
+        elif f"{args[0]}.{args[1]}" not in self.__all_objs.keys():
             print("** no instance found **")
         elif len(args) <= 3:
             print("** value missing **")
         else:
-            val_class = getattr(self.__all_objs[args[0] + "." + args[1]],
+            key = args[0] + "." + args[1]
+            val_class = getattr(self.__all_objs[key],
                                 args[2], str)
             val_class = eval(val_class.__class__.__name__)
-            self.__all_objs[args[0] + "." + args[1]][args[2]] = val_class(args[3])
-            print(self.__all_objs)
+            self.__all_objs[key][args[2]] = val_class(args[3])
             storage.save()
-
 
 
 if __name__ == "__main__":

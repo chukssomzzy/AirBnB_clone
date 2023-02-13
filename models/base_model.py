@@ -20,14 +20,17 @@ class BaseModel:
             self.created_at = datetime.datetime.now()
             self.updated_at = datetime.datetime.now()
             storage.new(self.to_dict())
+
     def __str__(self):
         """Returns a string representation of the basemodel"""
         return f"[{self.__class__.__name__}] ({self.id}) {self.__dict__}"
+
     def save(self):
         """Save changes to storage"""
         self.updated_at = datetime.datetime.now()
         storage.new(self.to_dict())
         storage.save()
+
     def to_dict(self):
         """Returns a dictionary representation of the obj"""
         dict = self.__dict__.copy()
