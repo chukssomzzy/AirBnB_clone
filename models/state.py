@@ -4,7 +4,7 @@
 from models.base_model import basemodel
 
 
-class States(basemodel):
+class State(basemodel):
     """describes state
 
     attributes:

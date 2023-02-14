@@ -4,7 +4,7 @@
 from models.base_model import basemodel
 
 
-class states(basemodel):
+class Review(basemodel):
     """describes state
 
     attributes:
