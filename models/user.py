@@ -2,10 +2,10 @@
 """User inherit the BaseModel"""
 
 
-import base_model
+from models.base_model import BaseModel
 
 
-class User(base_model.BaseModel):
+class User(BaseModel):
     """A class User that inherits from BaseModel
 
     Attributes:

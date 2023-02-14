@@ -9,6 +9,7 @@ from shlex import split
 
 from models import storage
 from models.base_model import BaseModel
+from models.user import User
 
 
 def parse(arg):
@@ -30,6 +31,7 @@ class HBNBCommand(cmd.Cmd):
     """Airbnb command line interpreter"""
     __defined_models = {
         "BaseModel",
+        "User",
     }
     __all_objs = storage.all()
     prompt = "(hbnb) "
