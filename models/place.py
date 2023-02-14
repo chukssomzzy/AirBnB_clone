@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """describes the class Amenity"""
 
-from models.base_model import basemodel
+from models.base_model import BaseModel
 
 
-class Amenity(basemodel):
+class Place(BaseModel):
     """describes state
 
     attributes:

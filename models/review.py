@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """describes the class Review"""
 
-from models.base_model import basemodel
+from models.base_model import BaseModel
 
 
-class Review(basemodel):
+class Review(BaseModel):
     """describes state
 
     attributes:

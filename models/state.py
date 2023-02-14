@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """describes the class state"""
 
-from models.base_model import basemodel
+from models.base_model import BaseModel
 
 
-class State(basemodel):
+class State(BaseModel):
     """describes state
 
     attributes:
