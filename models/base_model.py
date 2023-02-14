@@ -3,7 +3,7 @@
 """BaseModel defines all the common attributes/methods"""
 import uuid
 import datetime
-from . import storage
+import models
 
 
 class BaseModel:
@@ -19,7 +19,7 @@ class BaseModel:
             self.id = str(uuid.uuid4())
             self.created_at = datetime.datetime.now()
             self.updated_at = datetime.datetime.now()
-            storage.new(self.to_dict())
+            models.storage.new(self)
 
     def __str__(self):
         """Returns a string representation of the basemodel"""
@@ -28,8 +28,7 @@ class BaseModel:
     def save(self):
         """Save changes to storage"""
         self.updated_at = datetime.datetime.now()
-        storage.new(self.to_dict())
-        storage.save()
+        models.storage.save()
 
     def to_dict(self):
         """Returns a dictionary representation of the obj"""

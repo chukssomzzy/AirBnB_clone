@@ -82,11 +82,10 @@ class HBNBCommand(cmd.Cmd):
             print("** class doesn't exist **")
         elif len(args) < 2:
             print("** instance id missing **")
-        elif not getattr(self.__all_objs, args[0] + "." + args[1], None):
+        elif f"{args[0]}.{args[1]}" not in self.__all_objs.keys():
             print("** no instance found **")
         else:
-            model = eval(args[0])(self.__all_objs[args[0] + "." + args[1]])
-            print(model)
+            print(self.__all_objs[args[0] + "." + args[1]])
 
     def help_show(self):
         print("\n".join(["Usage: show <model> <id>", "class name is missing"
@@ -105,26 +104,11 @@ class HBNBCommand(cmd.Cmd):
         args = parse(args)
         list = []
         if not len(args):
-            for key, val in self.__all_objs.items():
-                val_copy = copy.copy(val)
-                del val_copy["__class__"]
-                val_copy["updated_at"
-                         ] = datetime.fromisoformat(val["updated_at"])
-                val_copy["created_at"
-                         ] = datetime.fromisoformat(val["created_at"])
-                list.append(f"[{key.split('.')[0]}] ({key.split('.')[1]})" +
-                            f" {val_copy}")
+            for val in self.__all_objs.values():
+                list.append(str(val))
         elif args[0] in self.__defined_models:
-            for key, val in {key: val for key, val in self.__all_objs.items()
-                             if key.split(".")[0] == args[0]}.items():
-                val_copy = copy.copy(val)
-                del val_copy["__class__"]
-                val_copy["updated_at"
-                         ] = datetime.fromisoformat(val["updated_at"])
-                val_copy["created_at"
-                         ] = datetime.fromisoformat(val["created_at"])
-                list.append(f"[{key.split('.')[0]}] ({key.split('.')[1]})" +
-                            f" {val_copy}")
+            for val in self.__all_objs.values():
+                list.append(str(val))
         else:
             print("** class doesn't exist **")
         if len(list):
@@ -178,11 +162,14 @@ class HBNBCommand(cmd.Cmd):
         else:
             key = args[0] + "." + args[1]
             val_class = getattr(self.__all_objs[key],
-                                args[2], str)
+                                args[2], None)
             val_class = eval(val_class.__class__.__name__)
-            self.__all_objs[key][args[2]] = val_class(args[3])
+            if val_class:
+                self.__all_objs[key].__dict__[args[2]] = val_class(args[3])
+            else:
+                self.__all_objs[key].__dict__[args[2]] = args[3]
             storage.save()
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     HBNBCommand().cmdloop()
