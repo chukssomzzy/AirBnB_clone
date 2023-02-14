@@ -163,8 +163,8 @@ class HBNBCommand(cmd.Cmd):
             key = args[0] + "." + args[1]
             val_class = getattr(self.__all_objs[key],
                                 args[2], None)
-            val_class = eval(val_class.__class__.__name__)
             if val_class:
+                val_class = eval(val_class.__class__.__name__)
                 self.__all_objs[key].__dict__[args[2]] = val_class(args[3])
             else:
                 self.__all_objs[key].__dict__[args[2]] = args[3]
