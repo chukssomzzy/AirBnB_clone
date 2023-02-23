@@ -1,0 +1,41 @@
+/*
+ =========================
+
+ Grid 
+
+ =========================
+ */
+
+*, *:before, *:after{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/*
+ =========================
+
+ Primary Header 
+
+ ========================
+ */
+
+ header {
+  height: 70px;
+  width: 100%;
+  background-color: #ff0000;
+}
+
+/*
+ =========================
+
+ Primary Footer 
+
+ =========================
+ */
+
+footer {
+  display: flex;
+  justify-content: center;
+  align-content: center;
+}
