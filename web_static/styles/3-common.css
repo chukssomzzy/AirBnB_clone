@@ -38,3 +38,24 @@ Container
     max-width: 1000px;
     margin: 30px auto;
 }
+
+/*
+ ==================================== 
+
+ Clear Float 
+
+ ==================================== 
+ */
+.group:before, .group:after {
+    content: "";
+    display: table;
+}
+
+.group:after {
+    clear: both;
+}
+
+.group {
+    clear: both;
+    zoom: 1;
+}
