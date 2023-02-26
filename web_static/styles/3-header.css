@@ -1,0 +1,19 @@
+/*
+======================== 
+
+Header  
+
+======================== \
+ */ 
+header {
+    display: flex;
+    align-items: center;
+    height: 70px;
+    width: 100%;
+    background: #fff;
+    border-bottom: 1px solid #ccc;
+}
+
+header img {
+    margin-left: 20px;
+}

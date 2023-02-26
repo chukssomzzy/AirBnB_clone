@@ -1,4 +1,4 @@
-/*
+ /*
 ==================== 
 
 Footer 
@@ -13,5 +13,6 @@ footer {
   width: 100%;
   text-align: center;
   line-height: 60px;
-  background-color: #00FF00;
+  background-color: #fff;
+  border-top: 1px solid #ccc;
 }
