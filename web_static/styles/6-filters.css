@@ -56,3 +56,18 @@ Filters
   font-weight: 600;
   font-size: 14px;
 }
+
+/*
+=========================== 
+
+Pop over 
+
+========================= = 
+ */ 
+
+.popover {
+  display: block;
+  margin-top: 20px;
+  width: 100%;
+
+}
